@@ -1,5 +1,9 @@
-use rusqlite::{Connection, Result};
+#![allow(dead_code,unused_variables,unused_imports)]
+mod message;
+mod mailbox;
+mod account;
+mod UI;
 
 fn main(){
-  println!("Hello, world!");
+  UI::ui::main_interface();
 }
