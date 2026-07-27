@@ -1,11 +1,14 @@
 use std::io::{self, BufRead,Write};
+mod login;
+
+
 enum StartCommands {
     Login,
     Exit,
 }
 
-pub fn main_interface() {
-    println!("====PHEMEMAIL====");
+pub fn main_interface(){
+    println!("=======================P=H=E=M=E=M=A=I=L=======================");
 
     loop {
         print!("-> ");
@@ -16,9 +19,10 @@ pub fn main_interface() {
         let command = input.trim();
         if command == "exit" {
             println!("Goodbye!");
-            break;
+            break;        
         } else if command == "login" {
-            println!("Login functionality is not implemented yet.");
+                login::login_interface();
+            
         } else {
             println!("Unknown command: {}", command);
         }

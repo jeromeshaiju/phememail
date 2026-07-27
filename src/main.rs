@@ -3,7 +3,8 @@ mod message;
 mod mailbox;
 mod account;
 mod UI;
-
+mod storage;
 fn main(){
+  storage::accountsdbms::accountsdb_creation().expect("Failed to create accounts database");
   UI::ui::main_interface();
 }
