@@ -28,5 +28,4 @@ pub fn login_interface(){
 }
 pub fn userinfo(){
     userinfofomdb();
-
 }
