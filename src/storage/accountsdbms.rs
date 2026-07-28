@@ -56,3 +56,24 @@ pub fn adduser(email: &str, name: &str, password: &str) -> Result<()> {
     println!("User added to database");
     Ok(())
 }
+
+pub fn userinfofomdb() -> Result<()> {
+    let conn = Connection::open("accounts.db")?;
+
+
+    let mut stmt = conn.prepare("SELECT id, email, name, password FROM user")?;
+    let user_iter = stmt.query_map([], |row| {
+        Ok(user {
+            id: row.get(0)?,
+            email: row.get(1)?,
+            name: row.get(2)?,
+            password: row.get(3)?,
+        })
+    })?;
+
+    for user in user_iter {
+        
+            println!("User info: {:?}", user?);
+        }
+    Ok(())
+}

@@ -1,6 +1,8 @@
 use std::io::{self, BufRead,Write};
 use crate::account;
 use crate::storage::accountsdbms::adduser;
+use crate::storage::accountsdbms::userinfofomdb;
+
 
 
 
@@ -22,5 +24,9 @@ pub fn login_interface(){
             println!("You entered email: {}, password: {}, username: {}", email, password, username);
             let account = account::Account::new(email.to_string(),username.to_string(), password.to_string());
             adduser(&account.email, &account.name, &account.password).expect("Failed to add user");
+
+}
+pub fn userinfo(){
+    userinfofomdb();
 
 }
