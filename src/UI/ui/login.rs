@@ -14,6 +14,8 @@ pub fn login_interface(){
     println!("=======================L=O=G=I=N=======================");
     println!("choose one of the following options:");
     let emails =getemails().expect("Failed to get emails from database");
+    println!("enter 0 to create a new account or select an existing account by number:");
+
     if emails.is_empty() {
         println!("No users found in the database. Please create a new account.");
     }
@@ -22,7 +24,6 @@ pub fn login_interface(){
             println!("{}. {}", i + 1, email);
         }
     }
-    println!("enter 0 to create a new account or select an existing account by number:");
     println!("enter exit to exit the login interface.");
     loop {
         print!("-> ");
@@ -48,17 +49,18 @@ pub fn login_interface(){
                 io::stdin().read_line(&mut username).expect("Failed to read line");
 
                 let email = email.trim();
-                let password = password.trim();
                 let username = username.trim();
+                let password = password.trim();
 
-                println!("You entered email: {}, password: {}, username: {}", email, password, username);
-                let account = account::Account::new(email.to_string(), username.to_string(), password.to_string());
+                println!("You entered email: {}, username: {},password: {},", email,username,password);
+                let account = account::Account::new(email.to_string(),password.to_string(),username.to_string());
                 adduser(&account.email, &account.name, &account.password).expect("Failed to add user");
                 current_user(account.email, account.name).expect("Failed to set current user");
                 println!("Account created successfully!");
                 break
             }
             _ => {
+                // the command doesnt work while entering other values and exits the application, so I will erorr chekk later
                 println!("you have selected the account: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));
                 println!("please enter the password for the selected account:");
                 print!("-> ");

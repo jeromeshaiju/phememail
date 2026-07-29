@@ -21,7 +21,7 @@ pub fn accountsdb_creation() -> Result<()> {
     conn.execute(
         "CREATE TABLE if not exists user (
             id   INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
             name TEXT NOT NULL,
             password TEXT NOT NULL
         )",
@@ -56,8 +56,9 @@ pub fn accountsdb_creation() -> Result<()> {
 
 pub fn adduser(email: &str, name: &str, password: &str) -> Result<()> {
     let conn = Connection::open("accounts.db")?;
+    println!("Adding user: email={}, name={}, password={}", email, name, password);
     conn.execute(
-        "INSERT OR IGNOREINTO user (email, name, password) VALUES (?1, ?2, ?3)",
+        "INSERT OR IGNORE INTO user (email, name, password) VALUES (?1, ?2, ?3)",
         params![email, name, password],
     )?;
     println!("User added to database");
