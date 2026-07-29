@@ -10,6 +10,7 @@ use crate::storage::accountsdbms::get_name;
 
 
 
+
 pub fn login_interface(){
     println!("=======================L=O=G=I=N=======================");
     println!("choose one of the following options:");
@@ -30,14 +31,14 @@ pub fn login_interface(){
         io::stdout().flush().expect("Failed to flush stdout");
         let mut input = String::new();
         io::stdin().read_line(&mut input).expect("Failed to read line");
-        println!("you have requested:{}",input);
         let command = input.trim();
         match command {
             "exit" => {
                 println!("exit the login interface.");
                 break;
             }
-            "0" => {
+            input => match input.parse::<usize>() {
+                Ok(0)=>{
                 println!("Email address: ");
                 let mut email = String::new();
                 io::stdin().read_line(&mut email).expect("Failed to read line");
@@ -58,9 +59,9 @@ pub fn login_interface(){
                 current_user(account.email, account.name).expect("Failed to set current user");
                 println!("Account created successfully!");
                 break
-            }
-            _ => {
-                // the command doesnt work while entering other values and exits the application, so I will erorr chekk later
+            },
+            Ok(num)=> match emails.get(num - 1){
+                Some(email) =>{
                 println!("you have selected the account: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));
                 println!("please enter the password for the selected account:");
                 print!("-> ");
@@ -77,6 +78,14 @@ pub fn login_interface(){
                 current_user(email.clone(), get_name(email).unwrap_or_else(|_e| "Unknown".to_string())).expect("Failed to set current user");
                 break
             }
+            None=>{
+                println!("Invalid selection")
+            }
+            },
+            _=>{
+                println!("Invalid option")
+            }
+        }
         }
     }
 }

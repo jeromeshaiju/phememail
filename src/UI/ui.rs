@@ -1,8 +1,10 @@
 use std::io::{self, BufRead, Write};
 mod login;
 
-
 pub fn main_interface(){
+    let  is_logged_in: bool =false;
+
+
     println!("=======================P=H=E=M=E=M=A=I=L=======================");
 
     loop {
@@ -30,4 +32,8 @@ pub fn main_interface(){
             }
         }
     }
+}
+
+pub fn is_logged(){
+    let is_logged_in = true;
 }

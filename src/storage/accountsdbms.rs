@@ -1,6 +1,7 @@
 use std::result;
 
 use rusqlite::{params, Connection, Result};
+use crate::UI::ui::is_logged;
 
 #[derive(Debug)]
 struct user {
@@ -145,6 +146,7 @@ pub fn current_user(email: String,name: String)-> Result<()>{
         "INSERT OR IGNORE INTO current_user (email, name) VALUES (?1, ?2)",
         (&me.email, &me.name),
     )?;
+    is_logged();
     Ok(())
 
 }
