@@ -6,7 +6,7 @@ pub struct Mailbox {
     pub email: String,
     pub count: usize,
     pub unseen: u32,
-    pub path: String,
+
 }
 
 impl Mailbox {
@@ -16,7 +16,6 @@ impl Mailbox {
      email: String,
      count: usize,
      unseen: u32,
-     path: String,
     ) -> Self {
         let mailbox_id = 0; // Placeholder, should be assigned based on the mailbox 
         let count: usize = 0;
@@ -29,7 +28,6 @@ impl Mailbox {
             email,
             count,
             unseen,
-            path,
         }
     }
 }

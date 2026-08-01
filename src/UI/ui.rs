@@ -1,10 +1,23 @@
 use std::io::{self, BufRead, Write};
 mod login;
+mod mailboxui;
 
+//commands
+const  exit:&str = "exit";
+const login:&str = "login";
+const infome: &str = "infome";
+const dropacct: &str = "dropacct";
+const mailbox:&str = "mailbox";
+
+pub static mut IS_LOGGED_IN: bool = false;
+
+pub fn is_logged() {
+    unsafe {
+        IS_LOGGED_IN = true;
+    }
+}
+    
 pub fn main_interface(){
-    let  is_logged_in: bool =false;
-
-
     println!("=======================P=H=E=M=E=M=A=I=L=======================");
 
     loop {
@@ -15,17 +28,32 @@ pub fn main_interface(){
         println!("you have requested:{}",input);
         let command = input.trim();
         match command {
-            "exit" => {
+            exit => {
                 println!("Goodbye!");
                 break;
             }
-            "login" => {
+           login=> {
                 login::login_interface();
             }
-            "infome" => {
+            infome => {
                 println!("============================I=N=F=O============================");
-                login::userinfo();
+                if unsafe{IS_LOGGED_IN} {
+                    login::userinfo();
+                } else {
+                    println!("You are not logged in. Please log in first.");
+                }
 
+            }
+            dropacct=> {
+                login::drop_account();
+            }
+            mailbox => {
+            println!("============================M=A=I=L=B=O=X============================");
+            if unsafe{IS_LOGGED_IN} {
+                    println!("not implemented yet")
+                } else {
+                    println!("You are not logged in. Please log in first.");
+                }
             }
             _ => {
                 println!("Unknown command: {}", command);
@@ -34,6 +62,3 @@ pub fn main_interface(){
     }
 }
 
-pub fn is_logged(){
-    let is_logged_in = true;
-}

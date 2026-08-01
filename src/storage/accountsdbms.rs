@@ -66,7 +66,7 @@ pub fn adduser(email: &str, name: &str, password: &str) -> Result<()> {
     Ok(())
 }
 
-pub fn userinfofomdb() -> Result<()> {
+pub fn userinfofromdb() -> Result<()> {
     let conn = Connection::open("accounts.db")?;
 
 
@@ -149,4 +149,14 @@ pub fn current_user(email: String,name: String)-> Result<()>{
     is_logged();
     Ok(())
 
+}
+
+pub fn drop_account_from_db(email: String) -> Result<()> {
+    let conn = Connection::open("accounts.db")?;
+    conn.execute(
+        "DELETE FROM user WHERE email = ?1",
+        params![email],
+    )?;
+    println!("Account with email {} has been dropped.", email);
+    Ok(())
 }
