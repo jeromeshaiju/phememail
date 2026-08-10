@@ -25,7 +25,7 @@ pub fn mailboxdb_creation() -> Result<()> {
             id   INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
             name TEXT NOT NULL,
-            count INTEGER NOT NULL
+            count INTEGER NOT NULL,
             unseen INTEGER NOT NULL
         )",
         (), // empty list of parameters.
@@ -70,7 +70,7 @@ pub fn addmailbox(email: &str, name: &str) -> Result<()> {
     Ok(())
 }
 
-pub fn mailboxinfofomdb() -> Result<()> {
+pub fn mailboxinfofromdb() -> Result<()> {
     let conn = Connection::open("mailbox.db")?;
 
 
@@ -92,12 +92,12 @@ pub fn mailboxinfofomdb() -> Result<()> {
     Ok(())
 }
 
-pub fn getmailboxes(email: &str) -> Result<Vec<String>> {
+pub fn getmailboxes(given_email: &str)->Result<Vec<String>> {
  let conn = Connection::open("mailbox.db")?;
 
 
     let mut stmt = conn.prepare("SELECT id, email, name, count, unseen FROM mailbox where email = ?1")?;
-    let mailbox_iter = stmt.query_map([email], |row| {
+    let mailbox_iter = stmt.query_map([given_email], |row| {
         Ok(mailbox {
             id: row.get(0)?,
             email: row.get(1)?,
@@ -108,7 +108,12 @@ pub fn getmailboxes(email: &str) -> Result<Vec<String>> {
     })?;
     let mut mailboxes = Vec::new();
     for mailbox in mailbox_iter {
-        mailboxes.push(mailbox?.email.to_string());
+        let m = mailbox?;
+        let name = m.name.to_string();
+        let email = m.email.to_string();
+        if (email == given_email.to_string()){
+        mailboxes.push(name);
+        }
     }
     Ok(mailboxes)
 }

@@ -1,4 +1,24 @@
 #![allow(dead_code,unused_variables,unused_imports)]
+
+
+
+pub struct CurrentUser {
+    id: i32,
+    email: String,
+    name: String,
+}
+impl CurrentUser{
+    pub fn new(id: i32, email: String, name: String) -> Self {
+        CurrentUser { id, email, name }
+    }
+    pub fn get_email(&self) -> &str {
+        &self.email
+    }
+    pub fn get_name(&self) -> &str {
+        &self.name
+    }
+}
+
 //has not implemented the authmethod and backend type yet, so they are commented out for now
 
 

@@ -57,7 +57,7 @@ pub fn login_interface(){
                 println!("You entered email: {}, username: {},password: {},", email,username,password);
                 let account = account::Account::new(email.to_string(),password.to_string(),username.to_string());
                 adduser(&account.email, &account.name, &account.password).expect("Failed to add user");
-                current_user(account.email, account.name).expect("Failed to set current user");
+                current_user(account.email, account.name);
                 println!("Account created successfully!");
                 break
             },
@@ -73,7 +73,7 @@ pub fn login_interface(){
                 if password_check(emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()), password).unwrap_or(false){
                     println!("you have logged in with the account: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));
                     let email = emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()).to_string();
-                    current_user(email.clone(), get_name(email).unwrap_or_else(|_e| "Unknown".to_string())).expect("Failed to set current user");
+                    current_user(email.clone(), get_name(email).unwrap_or_else(|_e| "Unknown".to_string()));
 
                 }else{
                     println!("Incorrect password for the account: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));

@@ -3,17 +3,34 @@ use std::result;
 use rusqlite::{params, Connection, Result};
 use crate::UI::ui::is_logged;
 
+
+pub struct CurrentUser {
+    id: i32,
+    email: String,
+    name: String,
+}
+impl CurrentUser{
+    pub fn new(id: i32, email: String, name: String) -> Self {
+        CurrentUser { id, email, name }
+    }
+    pub fn get_email(&self) -> &str {
+        &self.email
+    }
+    pub fn get_name(&self) -> &str {
+        &self.name
+    }
+}
+
+pub static mut  CURRENT_USER: Option<CurrentUser> = None;
+
+
+
 #[derive(Debug)]
 struct user {
     id: i32,
     email: String,
     name: String,
     password: String,
-}
-struct current_user {
-    id: i32,
-    email: String,
-    name: String,
 }
 
 pub fn accountsdb_creation() -> Result<()> {
@@ -127,28 +144,18 @@ pub fn get_name(email: String) -> Result<String> {
     let name: String = rows.next()?.unwrap().get(0)?;
     Ok(name)
 }
-pub fn current_user(email: String,name: String)-> Result<()>{
-    let conn = Connection::open_in_memory()?;
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS current_user (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL,
-            name TEXT NOT NULL
-        )",
-        [],
-    )?;
-    let me = current_user{
-        id: 0,
-        email: email.to_string(),
-        name: name.to_string(),
-    };
-    conn.execute(
-        "INSERT OR IGNORE INTO current_user (email, name) VALUES (?1, ?2)",
-        (&me.email, &me.name),
-    )?;
+pub fn current_user(email: String,name: String){
     is_logged();
-    Ok(())
-
+    let current = CurrentUser::new(0,email,name);
+    unsafe {
+        CURRENT_USER = Some(current);
+    }
+}
+pub fn current_user_email() ->Option<String> {
+    unsafe {
+        let ptr = std::ptr::addr_of!(CURRENT_USER);
+        (*ptr).as_ref().map(|u| u.get_email().to_string())
+    }
 }
 
 pub fn drop_account_from_db(email: String) -> Result<()> {

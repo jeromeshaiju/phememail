@@ -2,6 +2,8 @@ use std::io::{self, BufRead, Write};
 mod login;
 mod mailboxui;
 
+use crate::storage::accountsdbms;
+
 //commands
 const  exit:&str = "exit";
 const login:&str = "login";
@@ -16,6 +18,7 @@ pub fn is_logged() {
         IS_LOGGED_IN = true;
     }
 }
+
     
 pub fn main_interface(){
     println!("=======================P=H=E=M=E=M=A=I=L=======================");
@@ -50,7 +53,8 @@ pub fn main_interface(){
             mailbox => {
             println!("============================M=A=I=L=B=O=X============================");
             if unsafe{IS_LOGGED_IN} {
-                    println!("not implemented yet")
+                    let email = accountsdbms::current_user_email();
+                    mailboxui::mailbox_interface(email.as_ref().unwrap());
                 } else {
                     println!("You are not logged in. Please log in first.");
                 }
