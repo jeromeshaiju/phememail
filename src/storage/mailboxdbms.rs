@@ -3,6 +3,25 @@ use std::result;
 use rusqlite::{params, Connection, Result};
 use crate::UI::ui::is_logged;
 
+pub struct CurrentMailbox {
+    id: i32,
+    email: String,
+    name: String,
+}
+impl CurrentMailbox{
+    pub fn new(id: i32, email: String, name: String) -> Self {
+        CurrentMailbox { id, email, name }
+    }
+    pub fn get_email(&self) -> &str {
+        &self.email
+    }
+    pub fn get_name(&self) -> &str {
+        &self.name
+    }
+}
+
+pub static mut  CURRENT_MAILBOX: Option<CurrentMailbox> = None;
+
 #[derive(Debug)]
 struct mailbox {
     id: i32,
@@ -12,21 +31,17 @@ struct mailbox {
     unseen: u32,
 }
 
-struct current_mailbox {
-    email: String,
-    name: String,
-}
-
 pub fn mailboxdb_creation() -> Result<()> {
     let conn = Connection::open("mailbox.db")?;
 
     conn.execute(
         "CREATE TABLE if not exists mailbox (
             id   INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL,
             name TEXT NOT NULL,
             count INTEGER NOT NULL,
-            unseen INTEGER NOT NULL
+            unseen INTEGER NOT NULL,
+            UNIQUE(email, name)
         )",
         (), // empty list of parameters.
     )?;
@@ -117,27 +132,27 @@ pub fn getmailboxes(given_email: &str)->Result<Vec<String>> {
     }
     Ok(mailboxes)
 }
+pub fn get_email(name: String) -> Result<String> {
+    let conn = Connection::open("mailbox.db")?;
 
-pub fn current_mailbox(name: String)-> Result<()>{
-    let conn = Connection::open_in_memory()?;
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS current_user (
-            email TEXT NOT NULL UNIQUE,
-            name TEXT NOT NULL
-        )",
-        [],
-    )?;
-    let me = current_mailbox{
-        email: String::new(),
-        name: name.to_string(),
-    };
-    conn.execute(
-        "INSERT OR IGNORE INTO current_user (email, name) VALUES (?1, ?2)",
-        (&me.email, &me.name),
-    )?;
+    let mut stmt = conn.prepare("SELECT email FROM user WHERE name = ?1")?;
+    let mut rows = stmt.query(params![name])?;
+    let email: String = rows.next()?.unwrap().get(0)?;
+    Ok(email)
+}
+
+pub fn current_mailbox(email: String,name: String){
     is_logged();
-    Ok(())
-
+    let current = CurrentMailbox::new(0,email,name);
+    unsafe {
+        CURRENT_MAILBOX = Some(current);
+    }
+}
+pub fn current_mailbox_name() ->Option<String> {
+    unsafe {
+        let ptr = std::ptr::addr_of!(CURRENT_MAILBOX);
+        (*ptr).as_ref().map(|u| u.get_name().to_string())
+    }
 }
 
 pub fn drop_mailbox_from_db(email: String,name: String) -> Result<()> {

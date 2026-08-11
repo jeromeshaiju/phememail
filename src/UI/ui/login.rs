@@ -1,5 +1,4 @@
 use std::io::{self, BufRead,Write};
-use crate::account;
 use crate::storage::accountsdbms::adduser;
 use crate::storage::accountsdbms::userinfofromdb;
 use crate::storage::accountsdbms::getemails;
@@ -55,28 +54,27 @@ pub fn login_interface(){
                 let password = password.trim();
 
                 println!("You entered email: {}, username: {},password: {},", email,username,password);
-                let account = account::Account::new(email.to_string(),password.to_string(),username.to_string());
-                adduser(&account.email, &account.name, &account.password).expect("Failed to add user");
-                current_user(account.email, account.name);
+                adduser(email,username,password).expect("Failed to add user");
+                current_user(email.to_string(), username.to_string());
                 println!("Account created successfully!");
                 break
             },
             Ok(num)=> match emails.get(num - 1){
                 Some(email) =>{
-                println!("you have selected the account: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));
-                println!("please enter the password for the selected account:");
+                println!("you have selected the email: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));
+                println!("please enter the password for the selected email:");
                 print!("-> ");
                 io::stdout().flush().expect("Failed to flush stdout");
                 let mut password = String::new();
                 io::stdin().read_line(&mut password).expect("Failed to read line");
                 let password = password.trim();
                 if password_check(emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()), password).unwrap_or(false){
-                    println!("you have logged in with the account: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));
+                    println!("you have logged in with the email: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));
                     let email = emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()).to_string();
                     current_user(email.clone(), get_name(email).unwrap_or_else(|_e| "Unknown".to_string()));
 
                 }else{
-                    println!("Incorrect password for the account: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));
+                    println!("Incorrect password for the email: {}",emails.get(command.parse::<usize>().unwrap_or(0) - 1).unwrap_or(&"Invalid selection".to_string()));
                 }
                 break
             }

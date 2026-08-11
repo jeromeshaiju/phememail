@@ -10,6 +10,7 @@ const login:&str = "login";
 const infome: &str = "infome";
 const dropacct: &str = "dropacct";
 const mailbox:&str = "mailbox";
+const mailboxinfo:&str = "mailboxinfo";
 
 pub static mut IS_LOGGED_IN: bool = false;
 
@@ -49,6 +50,14 @@ pub fn main_interface(){
             }
             dropacct=> {
                 login::drop_account();
+            }
+            mailboxinfo => {
+                println!("============================M=A=I=L=B=O=X=I=N=F=O============================");
+                if unsafe {IS_LOGGED_IN}{
+                    mailboxui::mailboxinfo();
+                }else{
+                    println!("You are not logged in. Please log in first.");
+                }
             }
             mailbox => {
             println!("============================M=A=I=L=B=O=X============================");
